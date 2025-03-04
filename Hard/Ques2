@@ -1,1 +1,50 @@
+class TicketManager {  // Renamed class to avoid confusion
+    private int availableSeats = 10;
+
+    public synchronized boolean bookSeat(String customerName) {
+        if (availableSeats > 0) {
+            System.out.println(customerName + " successfully booked a seat. Remaining seats: " + (--availableSeats));
+            return true;
+        } else {
+            System.out.println(customerName + " failed to book. No seats available.");
+            return false;
+        }
+    }
+}
+
+class BookingThread extends Thread {
+    private TicketManager bookingSystem;
+    private String customerName;
+
+    public BookingThread(TicketManager bookingSystem, String customerName, int priority) {
+        this.bookingSystem = bookingSystem;
+        this.customerName = customerName;
+        setPriority(priority);
+    }
+
+    @Override
+    public void run() {
+        bookingSystem.bookSeat(customerName);
+    }
+}
+
+public class TicketBooking {
+    public static void main(String[] args) {
+        TicketManager bookingSystem = new TicketManager(); // Use the updated class name
+
+        BookingThread vip1 = new BookingThread(bookingSystem, "VIP Customer 1", Thread.MAX_PRIORITY);
+        BookingThread vip2 = new BookingThread(bookingSystem, "VIP Customer 2", Thread.MAX_PRIORITY);
+        BookingThread regular1 = new BookingThread(bookingSystem, "Regular Customer 1", Thread.NORM_PRIORITY);
+        BookingThread regular2 = new BookingThread(bookingSystem, "Regular Customer 2", Thread.NORM_PRIORITY);
+        BookingThread regular3 = new BookingThread(bookingSystem, "Regular Customer 3", Thread.MIN_PRIORITY);
+        BookingThread vip3 = new BookingThread(bookingSystem, "VIP Customer 3", Thread.MAX_PRIORITY);
+
+        vip1.start();
+        vip2.start();
+        regular1.start();
+        regular2.start();
+        regular3.start();
+        vip3.start();
+    }
+}
 
